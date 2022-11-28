@@ -27,8 +27,9 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
+from sys import stdin
 
-def main():
+def operate(op, id, name, score):
     # Make socket
     transport = TSocket.TSocket('localhost', 9090)
 
@@ -44,12 +45,20 @@ def main():
     # Connect!
     transport.open()
     
-    user = User(1, "zxq", 1600)
-    client.add_user(user,"")
+    user = User(id, name, score)
+    if op == "add":
+        client.add_user(user,"")
+    elif op == "remove":
+        client.remove_user(user,"")
+    
 
     # Close!
     transport.close()
 
+def main():
+    for line in stdin:
+        op, id, name, score = line.split(" ")
+        operate(op, int(id), name, int(score))
 
 if __name__ == '__main__':
     try:
